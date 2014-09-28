@@ -47,12 +47,12 @@ See MtkGps.h for the list of PMTK commands I've found so far. **pmtk** commands 
 
 With **gps data** turned on:
 
-![GPS terminal](http://achilikin.com/github/gps_term_data.png)
+![GPS terminal png](http://achilikin.com/github/gps_term_data.png)
 
 ### sav_view
 Just a simple example how to configure NMEA output and use parsed data. Collects and shows information about visible satellites on Serial2:
 
-![Satellites in view](http://achilikin.com/github/sat_view.png)  
+![Satellites in view png](http://achilikin.com/github/sat_view.png)  
 
 ### bridge
 Creates a bridge between RX0/TX1 serial port and USB serial port, so external software running on a PC can be used. Useful if you want to view skyplot, upload EPO or upgrade firmware. Also can monitor what is happening on the bridge and display communication log on system console (connected to RS232 on Galileo v1 or TTL serial headers on Galileo v2).
