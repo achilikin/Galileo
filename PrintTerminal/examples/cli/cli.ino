@@ -78,7 +78,8 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_is(cmd, "reset")) {
+	if (cmd_arg(cmd, "reset", &arg)) {
+		// ignore arg...
 		Serial2.begin(115200);
 		delay(100);
 		term->print("reseting...\n");
