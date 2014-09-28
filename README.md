@@ -20,7 +20,8 @@ Why? Just compare:
 
 ```
 term.attach(&Serial);
-term.print("Date: %02d/%02d/20%02d\n", tfix.tm_mday, tfix.tm_mon, tfix.tm_year);```
+term.print("Date: %02d/%02d/20%02d\n", tfix.tm_mday, tfix.tm_mon, tfix.tm_year);
+```
 
 and
 
