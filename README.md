@@ -99,4 +99,4 @@ Will automatically detect if PC application turns on NMEA binary format and swit
 
 Tested with MiniGPS and MT3339 GPS Tool from [Adafruit](https://learn.adafruit.com/adafruit-ultimate-gps/downloads-and-resources). Works fine with any general GPS NMEA parsing applications as well. 
 
-I was able to upgrade firmware to the latest version you can find at Adafruit Ultimate GPS [F.A.Q](https://learn.adafruit.com/adafruit-ultimate-gps/faq) page. Just in case if want to repeat this exercise as well, use the ~~force~~ 9600 baudrate and if you brick your GPS module it is your ~~life~~ brick. 
+I was able to upgrade firmware to the latest version you can find at Adafruit Ultimate GPS [F.A.Q](https://learn.adafruit.com/adafruit-ultimate-gps/faq) page. Just in case if you want to repeat this exercise as well, use the ~~force~~ 9600 baudrate and if you brick your GPS module it is your ~~life~~ brick. 
