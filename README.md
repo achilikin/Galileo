@@ -25,7 +25,7 @@ Connects to GPS module, parses NMEA messages and prints most common GPS data. Us
 
 Startup window after command **help** was executed:
 
-![GPS terminal](http://achilikin.com/github/gps_terminal.png)
+![GPS terminal](http://achilikin.com/github/Gps_terminal.png)
 
 First thing it does when starts - tries to detect current baud rate of the GPS module. You can always change it with **gps baud** command, but some packets like 9600 only, for example ***PMTKCHN*** sentence can force module to reset and switch to 9600. At least it happend a few times with my GPS. By default all data output is off, use corresponding commads to turn it on or change **gps_terminal.ino**.
 
@@ -43,7 +43,7 @@ Understands a few commands:
 
 See MtkGps.h for the list of PMTK commands I've found so far. **pmtk** commands session example: 
 
-![GPS terminal](http://achilikin.com/github/gps_term_pmtk.png)
+![GPS terminal](http://achilikin.com/github/Gps_term_pmtk.png)
 
 With **gps data** turned on:
 
