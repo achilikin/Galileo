@@ -91,7 +91,7 @@ Serial.print("/20");
 Serial.println(tfix.tm_year);
 ```
 
-In addition to just printing it can dump hex data, see **bridge** example below.
+In addition to just printing it can dump hex data, see **bridge** example above.
 
 Contains `SerialTerminal`, `SimpleCli` objects and **cli** example showing how to use them:
 
