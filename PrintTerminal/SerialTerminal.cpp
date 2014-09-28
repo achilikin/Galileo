@@ -130,7 +130,8 @@ int	SerialTerminal::get_char(int ch)
 	}
 
 	esc = 0;
-
+	if (ch == '\r')
+		ch = '\n';
 	if (flags & F_ECHO)
 		putch(ch);
 

@@ -91,8 +91,6 @@ Serial.print("/20");
 Serial.println(tfix.tm_year);
 ```
 
-In addition to just printing it can dump hex data, see **bridge** example above.
-
 Contains `SerialTerminal`, `SimpleCli` objects and **cli** example showing how to use them:
 
 ![cli example](http://achilikin.com/github/cli.png)
@@ -100,5 +98,7 @@ Contains `SerialTerminal`, `SimpleCli` objects and **cli** example showing how t
 **system** with no argument will show `uname -a` output. **system top -n 1** - one page of `top` output, and so on and so forth... Don't forget to add **-n 1** for **system top** or it will run until you re-upload the sketch. 
 
 **reset console** command will reset system console (Serial2) and return it back to the system. Useful if you switch between different examples and eventually system console got blocked because `Serial2.end()` was not called.
+
+In addition to just printing it can dump hex data, see **bridge** example above. `SerialTerminal::getch()` converts `<CR>` to `<LF>`, so you can use either Newline or Carriage Return in Arduino's Serial Monitor window.
 
 Have fun!
