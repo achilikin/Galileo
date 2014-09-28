@@ -58,7 +58,7 @@ Just a simple example how to configure NMEA output and use parsed data. Collects
 Creates a bridge between RX0/TX1 serial port and USB serial port, so external software running on a PC can be used. Useful if you want to view skyplot, upload EPO or upgrade firmware. Also can monitor what is happening on the bridge and display communication log on system console (connected to RS232 on Galileo v1 or TTL serial headers on Galileo v2).
 Will automatically detect if PC application turns on NMEA binary format and switch to dumping mode. For example, hex dump of EPO being uploaded:  
 
-![hex dump of EPO being uploaded](http://achilikin.com/github/bridge.png)
+![hex dump of EPO being uploaded](http://achilikin.com/github/Bridge.png)
 
 Tested with MiniGPS and MT3339 GPS Tool from [Adafruit](https://learn.adafruit.com/adafruit-ultimate-gps/downloads-and-resources). Works fine with any general GPS NMEA parsing applications as well. 
 
