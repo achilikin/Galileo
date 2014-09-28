@@ -7,45 +7,8 @@ Some useful (at least for me) libraries for Intel Galileo:
 
 To try it out put MtkGPS, PrintTerminal and YAHL folders to your Arduino libraries as usual.
  
-## YAHL - yet another helper library
-Contains only two files: 
-
-* **led.h** - `led.on()` looks better than `digitalWrite(13, HIGH)`, isn't it?
-* **ticker.h** - ticks every N milliseconds and calls specified function. Tick, tock...
-
-Includes the only one example: everybody's favourite **blink** 
-
-## PrintTerminal
-Why? Just compare:
-
-```
-term.attach(&Serial);
-term.print("Date: %02d/%02d/20%02d\n", tfix.tm_mday, tfix.tm_mon, tfix.tm_year);
-```
-
-and
-
-```
-Serial.print("Date: ");
-Serial.print(tfix.tm_mday);
-Serial.print("/");
-Serial.print(tfix.tm_mon);
-Serial.print("/20");
-Serial.println(tfix.tm_year);
-```
-
-In addition to just printing it can dump hex data, see **bridge** example below.
-
-Contains `SerialTerminal`, `SimpleCli` objects and **cli** example showing how to use them:
-
-![cli example](http://achilikin.com/github/cli.png)
-
-**system** with no argument will show `uname -a` output. **system top -n 1** - one page of `top` output, and so on and so forth... Don't forget to add **-n 1** for **system top** or it will run until you re-upload the sketch. 
-
-**reset console** command will reset system console (Serial2) and return it back to the system. Useful if you switch between different examples and eventually system console got blocked because `Serial2.end()` was not called.
-
 ## MtkGps - library for GPS modules compatible with MediaTek $PMTK protocol 
-Finally! Last but not least. Galileo library for GPS modules compatible with MediaTek PMTK protocol. Tested with the Adafruit Ultimate GPS GTop module using MTK3399 chipset:
+Galileo library for GPS modules compatible with MediaTek PMTK protocol. Tested with the Adafruit Ultimate GPS GTop module using MTK3399 chipset:
 
 * [http://www.adafruit.com/products/746](http://www.adafruit.com/products/746)
 * [https://learn.adafruit.com/adafruit-ultimate-gps](https://learn.adafruit.com/adafruit-ultimate-gps)
@@ -54,7 +17,7 @@ To use Adafruit Ultimate GPS with Galileo connect GPS RX to Galileo TX1, GPS TX 
 
 MtkGps should work with other GPS modules as well, but PMTK packet types might be different and changes in MtkGps.h required, use gps_terminal example to send PMTK commands to your module and check how it replys to them.
 
-Have not implemented data logging (LOCUS) commands, there were no need so far. Adding callbacks to parse log data should not be a problem, right?
+Have not implemented data logging (LOCUS) commands, maybe in future. Adding callbacks to parse log data should not be a problem, right?
 
 MtkGps Includes the following examples:
 ### gps_terminal
@@ -100,3 +63,42 @@ Will automatically detect if PC application turns on NMEA binary format and swit
 Tested with MiniGPS and MT3339 GPS Tool from [Adafruit](https://learn.adafruit.com/adafruit-ultimate-gps/downloads-and-resources). Works fine with any general GPS NMEA parsing applications as well. 
 
 I was able to upgrade firmware to the latest version you can find at Adafruit Ultimate GPS [F.A.Q](https://learn.adafruit.com/adafruit-ultimate-gps/faq) page. Just in case if you want to repeat this exercise as well, use the ~~force~~ 9600 baudrate and if you brick your GPS module it is your ~~life~~ brick. 
+
+## YAHL - yet another helper library
+Contains only two files: 
+
+* **led.h** - `led.on()` looks better than `digitalWrite(13, HIGH)`, isn't it?
+* **ticker.h** - ticks every N milliseconds and calls specified function. Tick, tock...
+
+Includes the only one example: everybody's favourite **blink** 
+
+## PrintTerminal
+Why? Just compare:
+
+```
+term.attach(&Serial);
+term.print("Date: %02d/%02d/20%02d\n", tfix.tm_mday, tfix.tm_mon, tfix.tm_year);
+```
+
+and
+
+```
+Serial.print("Date: ");
+Serial.print(tfix.tm_mday);
+Serial.print("/");
+Serial.print(tfix.tm_mon);
+Serial.print("/20");
+Serial.println(tfix.tm_year);
+```
+
+In addition to just printing it can dump hex data, see **bridge** example below.
+
+Contains `SerialTerminal`, `SimpleCli` objects and **cli** example showing how to use them:
+
+![cli example](http://achilikin.com/github/cli.png)
+
+**system** with no argument will show `uname -a` output. **system top -n 1** - one page of `top` output, and so on and so forth... Don't forget to add **-n 1** for **system top** or it will run until you re-upload the sketch. 
+
+**reset console** command will reset system console (Serial2) and return it back to the system. Useful if you switch between different examples and eventually system console got blocked because `Serial2.end()` was not called.
+
+Have fun!
