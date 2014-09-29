@@ -90,7 +90,7 @@ void setup()
 	gps.sendCommand(PMTK_SET_DGPS_MODE, PMTK_DGPS_WAAS);
 	if (nmea_echo) term.print("<%s\n", gps.cmd);
 	// set navigation speed threshold 0.2 m/s
-	gps.setNavThreshold(PMTK_NAV_THRESHOLD_OFF);
+	gps.setNavThreshold(PMTK_NAV_THRESHOLD_02);
 	if (nmea_echo) term.print("<%s\n", gps.cmd);
 	// request firmware release information
 	gps.sendCommand(PMTK_Q_RELEASE);
