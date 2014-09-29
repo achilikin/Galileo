@@ -72,7 +72,7 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_arg(buf, "gps nmea", &arg)) {
+	if (cmd_arg(cmd, "gps nmea", &arg)) {
 		if (cmd_is(arg, "on"))
 			nmea_echo = 1;
 		if (cmd_is(arg, "off"))
@@ -82,7 +82,7 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_arg(buf, "gps data", &arg)) {
+	if (cmd_arg(cmd, "gps data", &arg)) {
 		if (cmd_is(arg, "on"))
 			show_data = 1;
 		if (cmd_is(arg, "off"))
@@ -92,7 +92,7 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_arg(buf, "gps pmtk", &arg)) {
+	if (cmd_arg(cmd, "gps pmtk", &arg)) {
 		if (cmd_is(arg, "on"))
 			pmtk_echo = 1;
 		if (cmd_is(arg, "off"))
@@ -102,24 +102,24 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_arg(buf, "gps release", &arg)) {
+	if (cmd_arg(cmd, "gps release", &arg)) {
 		if (*arg == '\0')
 			term->print("%s\n", gps.getFWrelease());
 		else {
 			gps.sendCommand(PMTK_Q_RELEASE);
-			if (nmea_echo) term->print(">%s\n", gps.cmd);
+			if (pmtk_echo) term->print(">%s\n", gps.cmd);
 		}
 		return 0;
 	}
 
-	if (cmd_arg(buf, "gps baud", &arg)) {
+	if (cmd_arg(cmd, "gps baud", &arg)) {
 		if (*arg == '\0') {
 			term->print("gps baud rate %u\n", gps.getNmeaBaudRate());
 			return 0;
 		}
 		uint32_t baud = (uint32_t)atoi(arg);
 		if (gps.setNmeaBaudRate(baud) == 0) {
-			if (nmea_echo) term->print(">%s\n", gps.cmd);
+			if (pmtk_echo) term->print(">%s\n", gps.cmd);
 			gps.begin(baud);
 			term->print("gps baud rate set to %u\n", baud);
 			return 0;
@@ -128,15 +128,15 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return -1;
 	}
 
-	if (cmd_arg(buf, "gps standby", &arg)) {
+	if (cmd_arg(cmd, "gps standby", &arg)) {
 		if (cmd_is(arg, "on")) {
 			gps.sendCommand(PMTK_CMD_STANDBY_MODE, PMTK_ARG_ON);
-			if (nmea_echo) term->print(">%s\n", gps.cmd);
+			if (pmtk_echo) term->print(">%s\n", gps.cmd);
 			gps_standby = 1;
 		}
 		if (cmd_is(arg, "off")) {
 			gps.sendCommand(PMTK_CMD_STANDBY_MODE, PMTK_ARG_OFF);
-			if (nmea_echo) term->print(">%s\n", gps.cmd);
+			if (pmtk_echo) term->print(">%s\n", gps.cmd);
 			gps_standby = 0;
 		}
 		if (*arg == '\0')
@@ -144,16 +144,24 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	if (cmd_arg(buf, "pmtk", &arg)) {
+	if (cmd_arg(cmd, "pmtk", &arg)) {
 		if (*arg != '\0') {
-			sprintf(wline, "$PMTK%s", arg);
+			if (*arg == 'A') {
+				gps.sendCommand(PCMD_ANTENNA, PCMD_ANTENNA_OFF);
+				term->print("<%s\n", gps.cmd);
+				return 0;
+			}
+			if (*arg == '$')
+				strcpy(wline, arg);
+			else
+				sprintf(wline, "$PMTK%s", arg);
 			gps.sendStr(wline);
 			term->print("<%s\n", gps.cmd);
 			return 0;
 		}
 	}
 
-	if (cmd_arg(buf, "system", &arg)) {
+	if (cmd_arg(cmd, "system", &arg)) {
 		if (*arg == '\0')
 			arg = "uname -a";
 
@@ -166,6 +174,6 @@ int cli_handler(char *buf, PrintTerminal *term)
 		return 0;
 	}
 
-	term->print("Unknown command '%s'\n", cmd);
+	term->print("Unknown command '%s'\n", buf);
 	return -1;
 }
