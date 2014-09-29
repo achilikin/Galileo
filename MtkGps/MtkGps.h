@@ -42,7 +42,7 @@
 #define PMTK_BR_57600   57600
 #define PMTK_BR_115200  115200
 
-// not MTK detected
+// no MTK detected
 #define PMTK_BR_INVALID 0
 
 // PMTK_SET_DGPS_MODE arguments
@@ -70,6 +70,11 @@
 #define PMTK_NAV_THRESHOLD_15  6 // 1.5 m/s or 5.40 km/h or 2.916 knot
 #define PMTK_NAV_THRESHOLD_20  7 // 2.0 m/s or 7.20 km/h or 3.888 knot
 
+// PMTK_CMD_ANTENNA arguments
+#define  PCMD_ANTENNA_OFF 0
+#define  PCMD_ANTENNA_ON  1
+#define  PCMD_ANTENNA_Q   2
+
 // A lot googleing required to build this list of PMTK commands
 // some very badly documented, use at your oen risk.
 // Not supported commands listed just for completeness
@@ -79,6 +84,7 @@
 #define PMTK_ACK				  1 // acknowledge 
 #define PMTK_SYS_MSG			 10 // system startup message
 #define PMTK_TXT_MSG			 11 // system text message
+#define PCMD_ANTENNA			 33 // arg PCMD_ANTENNA_*
 #define PMTK_CMD_HOT_START		101 // no arg
 #define PMTK_CMD_WARM_START		102 // no arg
 #define PMTK_CMD_COLD_START		103 // no arg
@@ -147,6 +153,9 @@ public:
 	
 	// time zone offset from UTC in minutes
 	void setTimeZone(int tzone);
+	// get last fix date/time in struct tm and milliseconds to msec
+	// date valid only if RMC/ZDA sentences are configured for NMEA output
+	void getFixTime(struct tm *fix, uint16_t *msec = NULL);
 
 	// set serial port baud rate
 	int begin(uint32_t baud);
@@ -161,8 +170,8 @@ public:
 
 	// get RX/TX statistics
 	void getPortStat(uint32_t *rxstat, uint32_t *txstat = NULL);
-	// str should be long enough to accept "*XX<CR><LF>" at the end
-	int sendStr(char *str);
+	// str checksum will be calculated while sending
+	int sendStr(const char *str);
 	// write whatever to GPS module...
 	int write(const void *data, uint32_t len);
 	// send PMTK_* command with an argument
@@ -191,8 +200,6 @@ public:
 
 	// get firmware release information string
 	const char *getFWrelease(void);
-	// get last fix date/time in struct tm and milliseconds to msec
-	void getFixTime(struct tm *fix, uint16_t *msec = NULL);
 
 	// lat and lon in signed degree format DDD.dddddddd
 	double latitude, longitude;
@@ -213,6 +220,9 @@ public:
 private:
 	// serial port GPS module is attached to
 	TTYUARTClass *gpsSerial;
+	uint32_t fix_date; // latest fix date/time
+	uint32_t fix_time;
+	uint32_t fix_msec;
 	int      tzone;	// offset to UTC in minutes
 	uint32_t valid; // mask of populated nmea sentences
 	uint32_t brate;	// serial port baud rate

@@ -34,6 +34,7 @@ MtkGps::MtkGps(int tzone)
 	latitude = longitude = 0.0;
 	valid = 0;
 	rx = tx = 0;
+	fix_date = fix_time = fix_msec = 0;
 	this->tzone = tzone;
 
 	memset(&rmc, 0, sizeof(rmc));
@@ -172,8 +173,11 @@ int MtkGps::parse_nmea(const char *str)
 
 	if (nmea_type == NMEA_SEN_GGA) {
 		ret = nmea_parse_gpgga(str, &gga);
-		if (ret == 0)
+		if (ret == 0) {
+			fix_time = gga.time;
+			fix_msec = gga.millisec;
 			valid |= NMEA_SEN_GGA;
+		}
 		return ret;
 	}
 
@@ -192,6 +196,9 @@ int MtkGps::parse_nmea(const char *str)
 			longitude += frac/0.6;
 			if (rmc.flags & NMEA_LON_WEST)
 				longitude = -longitude;
+			fix_time = rmc.time;
+			fix_msec = rmc.millisec;
+			fix_date = rmc.date;
 			valid |= NMEA_SEN_RMC;
 		}
 		return ret;
@@ -199,8 +206,11 @@ int MtkGps::parse_nmea(const char *str)
 
 	if (nmea_type == NMEA_SEN_GLL) {
 		ret = nmea_parse_gpgll(str, &gll);
-		if (ret == 0)
+		if (ret == 0) {
+			fix_time = gll.time;
+			fix_msec = gll.millisec;
 			valid |= NMEA_SEN_GLL;
+		}
 		return ret;
 	}
 
@@ -220,8 +230,12 @@ int MtkGps::parse_nmea(const char *str)
 
 	if (nmea_type == NMEA_SEN_ZDA) {
 		ret = nmea_parse_gpzda(str, &zda);
-		if (ret == 0)
+		if (ret == 0) {
+			fix_date = zda.date;
+			fix_time = zda.time;
+			fix_msec = zda.millisec;
 			valid |= NMEA_SEN_ZDA;
+		}
 		return ret;
 	}
 
@@ -279,26 +293,29 @@ const char *MtkGps::read(void)
 	return NULL;
 }
 
+// copy str to internal last command buffer,
 // calculate CRC, append to the string and send to serial port
-int MtkGps::sendStr(char *str)
+int MtkGps::sendStr(const char *str)
 {
 	if (*str != '$')
 		return -1;
-	char *ptr = str + 1;
+
+	char *ptr = cmd;
+	*ptr++ = *str++;
 
 	uint8_t crc = 0;
-	while(*ptr) {
-		crc ^= *ptr++;
+	for(int i = 1; *str && i < (sizeof(cmd) - 4); i++) {
+		crc ^= *str;
+		*ptr++ = *str++;
 		tx++;
 	}
 	sprintf(ptr, "*%02X", crc);
 	tx += 5; // '*XX<CR><LF>
 	if (gpsSerial) {
-		gpsSerial->println(str);
+		gpsSerial->println(cmd);
 		delay(10);
 	}
 
-	strcpy(cmd, str);
 	return 0;
 }
 
@@ -321,14 +338,18 @@ void MtkGps::getPortStat(uint32_t *rxstat, uint32_t *txstat)
 // arg >= 0, not used if  < 0
 char *MtkGps::sendCommand(unsigned cmd, int arg)
 {
-	static char str[64];
+	char str[64];
 
 	if (cmd > 999)
 		return "Invalid command\n";
-	if (arg >= 0)
-		sprintf(str, "$PMTK%03d,%d", cmd, arg);
-	else
-		sprintf(str, "$PMTK%03d", cmd);
+	if (cmd == PCMD_ANTENNA)
+		sprintf(str, "$PGCMD,%d,%d", cmd, arg);
+	else {
+		if (arg >= 0)
+			sprintf(str, "$PMTK%03d,%d", cmd, arg);
+		else
+			sprintf(str, "$PMTK%03d", cmd);
+	}
 
 	sendStr(str);
 	return str;
@@ -448,42 +469,17 @@ const char *MtkGps::getFWrelease(void)
 
 void MtkGps::getFixTime(struct tm *fix, uint16_t *millis)
 {
-	uint32_t time = 0;
-	uint32_t date = 0;
-	uint16_t msec = 0;
-
-	if (valid & NMEA_SEN_RMC) {
-		date = rmc.date;
-		time = rmc.time;
-		msec = rmc.millisec;
-	}
-	else if (valid & NMEA_SEN_GGA) {
-		time = gga.time;
-		msec = gga.millisec;
-	}
-	else if (valid & NMEA_SEN_GLL) {
-		time = gga.time;
-		msec = gga.millisec;
-	}
-	else if (valid & NMEA_SEN_ZDA) {
-		date = zda.date;
-		time = zda.time;
-		msec = zda.millisec;
-	}
-
-	fix->tm_hour = time / 10000;
-	fix->tm_min  = (time % 10000) / 100;
+	fix->tm_hour = fix_time / 10000;
+	fix->tm_min  = (fix_time % 10000) / 100;
 	fix->tm_min  += tzone;
-	fix->tm_sec  = (time % 100);
-	fix->tm_mday = date / 10000;
-	fix->tm_mon  = (date % 10000) / 100;
-	fix->tm_year = (date % 100);
+	fix->tm_sec  = (fix_time % 100);
+	fix->tm_mday = fix_date / 10000;
+	fix->tm_mon  = (fix_date % 10000) / 100;
+	fix->tm_year = (fix_date % 100);
 
-	if (tzone) {
-		time_t tt = mktime(fix);
-		memcpy(fix, localtime(&tt), sizeof(struct tm));
-	}
+	if (tzone)
+		mktime(fix);
 
 	if (millis)
-		*millis = msec;
+		*millis = fix_msec;
 }
