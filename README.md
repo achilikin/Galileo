@@ -36,7 +36,7 @@ Understands a few commands:
     * gps pmtk [on|off] - on/off PMTK sentences from GPS
     * gps baud          - set communication speed, 14400 not supported
     * gps release       - prints GPS module firmware information
-    * pmtk <command>    - adds $PMTK to specified command and sends to GPS module
+    * pmtk <command>    - sends specified command to GPS module, see example and note below
     * set time          - set system time using GPS time of the last fix, use MtkGps::setTimeZone() to add offset to UTC time
     * system [cmd]      - system command line fun
 
@@ -44,6 +44,16 @@ Understands a few commands:
 See MtkGps.h for the list of PMTK commands I've found so far. **pmtk** commands session example: 
 
 ![GPS terminal](http://achilikin.com/github/Gps_term_pmtk.png)
+
+Note: **pmtk** can be used in two different ways:
+```
+pmtk 402         // will add $PMTK in front a command and add *crc
+<$PMTK402*36
+>$PMTK502,0*29
+pmtk $PGCMD33,0  // will send profided string as it is adding *crc 
+<$PGCMD,33,0*6D
+>$PGACK,33,0*6E
+```
 
 With **gps data** turned on:
 
