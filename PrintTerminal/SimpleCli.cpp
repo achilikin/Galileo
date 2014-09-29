@@ -55,7 +55,7 @@ int SimpleCli::interact(int ch)
 	}
 
 	// backspace processing
-	if (ch == '\b') {
+	if ((ch == '\b') || (ch == 127)) { // Backspace coded as 'Ctr+?' == 127
 		if (cursor) {
 			cursor--;
 			cmd[cursor] = '\0';
@@ -66,7 +66,7 @@ int SimpleCli::interact(int ch)
 		}
 	}
 
-	if (ch < ' ')
+	if (ch < ' ' || ch == 127)
 		return 0;
 
 	cmd[cursor++] = (uint8_t)ch;
@@ -87,11 +87,14 @@ int cmd_is(const char *cmd, const char *str)
 
 int cmd_arg(char *cmd, const char *str, char **arg)
 {
-	size_t len = strlen(str);
 	char *end;
+	size_t len = strlen(str);
+
 	if (strncmp(cmd, str, len) == 0) {
 		end = cmd + len;
-		for(end = cmd + len; *end <= ' ' && *end != '\0'; end ++)
+		if (*end > ' ')
+			return 0;
+		for(; *end <= ' ' && *end != '\0'; end ++)
 			*end = '\0';
 		*arg = end;
 		return 1;
