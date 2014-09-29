@@ -43,7 +43,9 @@
 #define NMEA_SEN_MCHN	0x0080
 
 /* MTK reply sentence */
-#define NMEA_SEN_MTK	0x4000 // PMTK sentence 
+#define NMEA_SEN_MTK	0x8000 // PMTK sentence
+#define NMEA_SEN_PGACK	0x4000 // PGACK sentence
+#define NMEA_SEN_PGTOP	0x2000 // PGTOP sentence
 
 #define NMEA_VALID		0x0001
 #define NMEA_LAT_SOUTH	0x0002

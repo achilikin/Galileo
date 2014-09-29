@@ -59,6 +59,10 @@ int nmea_get_type(const char *nmea)
 		return NMEA_SEN_MCHN;
 	if (strncmp(nmea, "$PMTK", 5) == 0)
 		return NMEA_SEN_MTK;
+	if (strncmp(nmea, "$PGTOP,", 7) == 0)
+		return NMEA_SEN_PGTOP;
+	if (strncmp(nmea, "$PGACK,", 7) == 0)
+		return NMEA_SEN_PGACK;
 	
 	return NMEA_INVALID;
 }
