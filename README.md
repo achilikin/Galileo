@@ -50,7 +50,7 @@ Note: **pmtk** can be used in two different ways:
 pmtk 402         // will add $PMTK in front a command and add *crc
 <$PMTK402*36
 >$PMTK502,0*29
-pmtk $PGCMD33,0  // will send profided string as it is adding *crc 
+pmtk $PGCMD33,0  // will send provided string as it is adding *crc 
 <$PGCMD,33,0*6D
 >$PGACK,33,0*6E
 ```
