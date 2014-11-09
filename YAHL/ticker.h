@@ -21,6 +21,10 @@
 	Simple timer handler, create it and then call tick(millis()) periodically
 */
 
+#define TICK_SEC(x)  (x*1000)
+#define TICK_MIN(x)  (x*60*1000)
+#define TICK_HOUR(x) (x*60*60*1000)
+
 // tick handler, called every time when time interval is expired
 typedef int tickerHandler(void *data);
 
