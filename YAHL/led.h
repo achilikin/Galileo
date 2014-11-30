@@ -26,8 +26,8 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.	
 */
-#ifndef __LED_CONTROL_H__
-#define __LED_CONTROL_H__
+#ifndef __YAHL_LED_CONTROL_H__
+#define __YAHL_LED_CONTROL_H__
 
 /*
 	It is so boring to type degitalWrite() every time when you want control a LED
