@@ -1,5 +1,5 @@
 /*	BSD License
-	Copyright (c) 2014 Andrey Chilikin https://github.com/achilikin
+	Copyright (c) 2015 Andrey Chilikin https://github.com/achilikin
 
 	Redistribution and use in source and binary forms, with or without 
 	modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 	Simple timer handler, create it and then call tick(millis()) periodically
 */
 
-#define TICK_SEC(x)  (x*1000)
-#define TICK_MIN(x)  (x*60*1000)
-#define TICK_HOUR(x) (x*60*60*1000)
+#define TICK_SEC(x)  (((uint32_t)x)*1000l)
+#define TICK_MIN(x)  (((uint32_t)x)*60l*1000l)
+#define TICK_HOUR(x) (((uint32_t)x)*60l*60l*1000l)
 
 // tick handler, called every time when time interval is expired
-typedef int tickerHandler(void *data);
+typedef int8_t tickerHandler(void *data);
 
 class ticker_t {
 public:
@@ -46,12 +46,16 @@ public:
 	ticker_t(uint32_t period, tickerHandler *phanler);
 
 	// checks if time interval expired and call tick handler
-	int tick(unsigned long current_millis, void *data);
+	int8_t tick(unsigned long current_millis, void *data);
 
 private:
 	uint32_t interval;
-	unsigned long last_call;
+	uint32_t last_call;
 	tickerHandler *handler;
+public:
+	uint32_t set_interval(uint32_t span) { uint32_t current = interval;  interval = span; return current; }
+	uint32_t get_interval(void) { return interval; }
+	void reset(void) { last_call = 0; }
 };
 
 ticker_t::ticker_t(uint32_t period, tickerHandler *phanler)
@@ -61,10 +65,11 @@ ticker_t::ticker_t(uint32_t period, tickerHandler *phanler)
 	last_call = 0;
 }
 
-int ticker_t::tick(unsigned long current_millis, void *data)
+int8_t ticker_t::tick(uint32_t current_millis, void *data)
 {
-	if ((current_millis - last_call) >= interval) {
-		last_call = current_millis;
+	uint32_t span = current_millis - last_call;
+	if (span >= interval) {
+		last_call = current_millis - (span - interval);
 		return handler(data);
 	}
 	return 0;
